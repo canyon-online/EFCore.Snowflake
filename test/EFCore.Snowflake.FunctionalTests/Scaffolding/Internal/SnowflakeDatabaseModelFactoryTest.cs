@@ -43,8 +43,8 @@ public class SnowflakeDatabaseModelFactoryTest : IClassFixture<SnowflakeDatabase
                     INCREMENT BY 2
                     ORDER;
             """],
-            Enumerable.Empty<string>(),
-            Enumerable.Empty<string>(),
+            [],
+            [],
             dbModel =>
             {
                 var defaultSequence = dbModel.Sequences.First(ds => ds.Name == "DefaultFacetsSequence");
@@ -81,8 +81,8 @@ public class SnowflakeDatabaseModelFactoryTest : IClassFixture<SnowflakeDatabase
             """CREATE SEQUENCE "Sequence";""",
             """CREATE SEQUENCE "db2"."Sequence";"""
             ],
-            Enumerable.Empty<string>(),
-            new[] { "db2" },
+            [],
+            ["db2"],
             dbModel =>
             {
                 var sequence = Assert.Single(dbModel.Sequences);
@@ -110,8 +110,8 @@ public class SnowflakeDatabaseModelFactoryTest : IClassFixture<SnowflakeDatabase
     public void Create_tables()
         => Test(
             ["""CREATE TABLE "Everest" (id int);""", """CREATE TABLE "Denali" (id int);"""],
-            Enumerable.Empty<string>(),
-            Enumerable.Empty<string>(),
+            [],
+            [],
             dbModel =>
             {
                 Assert.Collection(
@@ -136,8 +136,8 @@ public class SnowflakeDatabaseModelFactoryTest : IClassFixture<SnowflakeDatabase
     public void Filter_schemas()
         => Test(
             ["""CREATE TABLE "db2"."K2" (Id int, A varchar, UNIQUE (A));""", """CREATE TABLE "Kilimanjaro" (Id int, B varchar, UNIQUE (B));"""],
-            Enumerable.Empty<string>(),
-            new[] { "db2" },
+            [],
+            ["db2"],
             dbModel =>
             {
                 var table = Assert.Single(dbModel.Tables);
@@ -156,7 +156,7 @@ public class SnowflakeDatabaseModelFactoryTest : IClassFixture<SnowflakeDatabase
                 """CREATE TABLE "K2" (Id int, A varchar, UNIQUE (A));""",
                 """CREATE TABLE "Kilimanjaro" (Id int, B varchar, UNIQUE (B), FOREIGN KEY (B) REFERENCES "K2" (A));"""],
             ["K2"],
-            Enumerable.Empty<string>(),
+            [],
             dbModel =>
             {
                 var table = Assert.Single(dbModel.Tables);
@@ -176,8 +176,8 @@ public class SnowflakeDatabaseModelFactoryTest : IClassFixture<SnowflakeDatabase
                 """CREATE TABLE "K.2" (Id int, A varchar, UNIQUE (A));""",
                 """CREATE TABLE "Kilimanjaro" (Id int, B varchar, UNIQUE (B));"""
             ],
-            new[] { @"""K.2""" },
-            Enumerable.Empty<string>(),
+            [@"""K.2"""],
+            [],
             dbModel =>
             {
                 var table = Assert.Single(dbModel.Tables);
@@ -200,8 +200,8 @@ public class SnowflakeDatabaseModelFactoryTest : IClassFixture<SnowflakeDatabase
                 """CREATE TABLE "db2"."K2" (Id int, A varchar, UNIQUE (A));""",
                 """CREATE TABLE "Kilimanjaro" (Id int, B varchar, UNIQUE (B));"""
             ],
-            new[] { "PUBLIC.K2" },
-            Enumerable.Empty<string>(),
+            ["PUBLIC.K2"],
+            [],
             dbModel =>
             {
                 var table = Assert.Single(dbModel.Tables);
@@ -225,8 +225,8 @@ public class SnowflakeDatabaseModelFactoryTest : IClassFixture<SnowflakeDatabase
                 """CREATE TABLE "db.2"."K.2" (Id int, A varchar, UNIQUE (A));""",
                 """CREATE TABLE "db.2"."Kilimanjaro" (Id int, B varchar, UNIQUE (B));"""
             ],
-            new[] { @"""db.2"".""K.2""" },
-            Enumerable.Empty<string>(),
+            [@"""db.2"".""K.2"""],
+            [],
             dbModel =>
             {
                 var table = Assert.Single(dbModel.Tables);
@@ -249,8 +249,8 @@ public class SnowflakeDatabaseModelFactoryTest : IClassFixture<SnowflakeDatabase
                 """CREATE TABLE "db2"."K.2" (Id int, A varchar, UNIQUE (A));""",
                 """CREATE TABLE "Kilimanjaro" (Id int, B varchar, UNIQUE (B));"""
             ],
-            new[] { @"PUBLIC.""K.2""" },
-            Enumerable.Empty<string>(),
+            [@"PUBLIC.""K.2"""],
+            [],
             dbModel =>
             {
                 var table = Assert.Single(dbModel.Tables);
@@ -274,8 +274,8 @@ public class SnowflakeDatabaseModelFactoryTest : IClassFixture<SnowflakeDatabase
                 """CREATE TABLE "db.2"."K2" (Id int, A varchar, UNIQUE (A));""",
                 """CREATE TABLE "db.2"."Kilimanjaro" (Id int, B varchar, UNIQUE (B));"""
             ],
-            new[] { @"""db.2"".K2" },
-            Enumerable.Empty<string>(),
+            [@"""db.2"".K2"],
+            [],
             dbModel =>
             {
                 var table = Assert.Single(dbModel.Tables);
@@ -329,15 +329,14 @@ public class SnowflakeDatabaseModelFactoryTest : IClassFixture<SnowflakeDatabase
                     FOREIGN KEY (""ForeignKeyId1"", ""ForeignKeyId2"") REFERENCES ""db2"".""PrincipalTable""(""UC1"", ""UC2"") ON DELETE NO ACTION
                 );"
             ],
-            new[]
-            {
+            [
                 @"""db.2"".""QuotedTableName""",
                 @"""db.2"".SimpleTableName",
                 @"PUBLIC.""Table.With.Dot""",
                 @"PUBLIC.""SimpleTableName""",
                 @"""JustTableName"""
-            },
-            new[] { "db2" },
+            ],
+            ["db2"],
             dbModel =>
             {
                 var sequence = Assert.Single(dbModel.Sequences);
@@ -404,8 +403,8 @@ public class SnowflakeDatabaseModelFactoryTest : IClassFixture<SnowflakeDatabase
                 "Name" text NOT NULL
             );
             """,
-            Enumerable.Empty<string>(),
-            Enumerable.Empty<string>(),
+            [],
+            [],
             dbModel =>
             {
                 var table = dbModel.Tables.Single();
@@ -430,8 +429,8 @@ public class SnowflakeDatabaseModelFactoryTest : IClassFixture<SnowflakeDatabase
             """
             CREATE VIEW "BlogsView" AS SELECT 100::int AS "Id", ''::text AS "Name";
             """,
-            Enumerable.Empty<string>(),
-            Enumerable.Empty<string>(),
+            [],
+            [],
             dbModel =>
             {
                 var table = Assert.IsType<DatabaseView>(dbModel.Tables.Single());
@@ -456,8 +455,8 @@ public class SnowflakeDatabaseModelFactoryTest : IClassFixture<SnowflakeDatabase
             """
             CREATE TABLE "PrimaryKeyTable" ("Id" int PRIMARY KEY);
             """,
-            Enumerable.Empty<string>(),
-            Enumerable.Empty<string>(),
+            [],
+            [],
             dbModel =>
             {
                 var pk = dbModel.Tables.Single().PrimaryKey;
@@ -465,7 +464,7 @@ public class SnowflakeDatabaseModelFactoryTest : IClassFixture<SnowflakeDatabase
                 Assert.Equal("PUBLIC", pk?.Table?.Schema);
                 Assert.Equal("PrimaryKeyTable", pk!.Table?.Name);
                 Assert.StartsWith("SYS_CONSTRAINT_", pk.Name);
-                Assert.Equal(new List<string> { "Id" }, pk.Columns.Select(ic => ic.Name).ToList());
+                Assert.Equal(["Id"], pk.Columns.Select(ic => ic.Name).ToList());
             },
             @"DROP TABLE ""PrimaryKeyTable""");
 
@@ -484,8 +483,8 @@ public class SnowflakeDatabaseModelFactoryTest : IClassFixture<SnowflakeDatabase
 
             
             """,
-            Enumerable.Empty<string>(),
-            Enumerable.Empty<string>(),
+            [],
+            [],
             dbModel =>
             {
                 var table = dbModel.Tables.Single();
@@ -495,13 +494,13 @@ public class SnowflakeDatabaseModelFactoryTest : IClassFixture<SnowflakeDatabase
                 Assert.Equal("PUBLIC", firstConstraint.Table.Schema);
                 Assert.Equal("UniqueConstraint", firstConstraint.Table.Name);
                 Assert.StartsWith("SYS_CONSTRAINT_", firstConstraint.Name);
-                Assert.Equal(new List<string> { "Name" }, firstConstraint.Columns.Select(ic => ic.Name).ToList());
+                Assert.Equal(["Name"], firstConstraint.Columns.Select(ic => ic.Name).ToList());
 
                 var secondConstraint = table.UniqueConstraints.Single(c => c.Columns.Count == 2);
                 Assert.Equal("PUBLIC", secondConstraint.Table.Schema);
                 Assert.Equal("UniqueConstraint", secondConstraint.Table.Name);
                 Assert.StartsWith("SYS_CONSTRAINT_", secondConstraint.Name);
-                Assert.Equal(new List<string> { "Unq1", "Unq2" }, secondConstraint.Columns.Select(ic => ic.Name).ToList());
+                Assert.Equal(["Unq1", "Unq2"], secondConstraint.Columns.Select(ic => ic.Name).ToList());
             },
             @"DROP TABLE ""UniqueConstraint""");
 
@@ -525,8 +524,8 @@ public class SnowflakeDatabaseModelFactoryTest : IClassFixture<SnowflakeDatabase
                     FOREIGN KEY (""Id"") REFERENCES ""PrincipalTable""(""Id"") ON DELETE NO ACTION
                 );"
             ],
-            Enumerable.Empty<string>(),
-            Enumerable.Empty<string>(),
+            [],
+            [],
             dbModel =>
             {
                 var firstFk = Assert.Single(dbModel.Tables.Single(t => t.Name == "FirstDependent").ForeignKeys);
@@ -535,8 +534,8 @@ public class SnowflakeDatabaseModelFactoryTest : IClassFixture<SnowflakeDatabase
                 Assert.Equal("FirstDependent", firstFk.Table.Name);
                 Assert.Equal("PUBLIC", firstFk.PrincipalTable.Schema);
                 Assert.Equal("PrincipalTable", firstFk.PrincipalTable.Name);
-                Assert.Equal(new List<string> { "ForeignKeyId" }, firstFk.Columns.Select(ic => ic.Name).ToList());
-                Assert.Equal(new List<string> { "Id" }, firstFk.PrincipalColumns.Select(ic => ic.Name).ToList());
+                Assert.Equal(["ForeignKeyId"], firstFk.Columns.Select(ic => ic.Name).ToList());
+                Assert.Equal(["Id"], firstFk.PrincipalColumns.Select(ic => ic.Name).ToList());
                 Assert.Equal(ReferentialAction.NoAction, firstFk.OnDelete);
 
                 var secondFk = Assert.Single(dbModel.Tables.Single(t => t.Name == "SecondDependent").ForeignKeys);
@@ -545,8 +544,8 @@ public class SnowflakeDatabaseModelFactoryTest : IClassFixture<SnowflakeDatabase
                 Assert.Equal("SecondDependent", secondFk.Table.Name);
                 Assert.Equal("PUBLIC", secondFk.PrincipalTable.Schema);
                 Assert.Equal("PrincipalTable", secondFk.PrincipalTable.Name);
-                Assert.Equal(new List<string> { "Id" }, secondFk.Columns.Select(ic => ic.Name).ToList());
-                Assert.Equal(new List<string> { "Id" }, secondFk.PrincipalColumns.Select(ic => ic.Name).ToList());
+                Assert.Equal(["Id"], secondFk.Columns.Select(ic => ic.Name).ToList());
+                Assert.Equal(["Id"], secondFk.PrincipalColumns.Select(ic => ic.Name).ToList());
                 Assert.Equal(ReferentialAction.NoAction, secondFk.OnDelete);
             },
             [
@@ -571,8 +570,8 @@ public class SnowflakeDatabaseModelFactoryTest : IClassFixture<SnowflakeDatabase
                 "numeric18Column" NUMBER(18) NOT NULL
             )
             """,
-            Enumerable.Empty<string>(),
-            Enumerable.Empty<string>(),
+            [],
+            [],
             dbModel =>
             {
                 var columns = dbModel.Tables.Single().Columns;
@@ -593,8 +592,8 @@ public class SnowflakeDatabaseModelFactoryTest : IClassFixture<SnowflakeDatabase
                 "varchar66Column" varchar(66) NULL
             )
             """,
-            Enumerable.Empty<string>(),
-            Enumerable.Empty<string>(),
+            [],
+            [],
             dbModel =>
             {
                 var columns = dbModel.Tables.Single().Columns;
@@ -618,8 +617,8 @@ public class SnowflakeDatabaseModelFactoryTest : IClassFixture<SnowflakeDatabase
                 "timestamp_ltz4Column" TIMESTAMP_LTZ(4) NULL
             )
             """,
-            Enumerable.Empty<string>(),
-            Enumerable.Empty<string>(),
+            [],
+            [],
             dbModel =>
             {
                 var columns = dbModel.Tables.Single().Columns;
@@ -642,8 +641,8 @@ public class SnowflakeDatabaseModelFactoryTest : IClassFixture<SnowflakeDatabase
                 "fixedLengthCol" BINARY(123) NULL
             )
             """,
-            Enumerable.Empty<string>(),
-            Enumerable.Empty<string>(),
+            [],
+            [],
             dbModel =>
             {
                 var columns = dbModel.Tables.Single().Columns;
@@ -664,8 +663,8 @@ public class SnowflakeDatabaseModelFactoryTest : IClassFixture<SnowflakeDatabase
                 "FixedArrayValue" ARRAY NOT NULL DEFAULT '[1,2]'
             )
             """,
-            Enumerable.Empty<string>(),
-            Enumerable.Empty<string>(),
+            [],
+            [],
             dbModel =>
             {
                 var columns = dbModel.Tables.Single().Columns;
@@ -696,8 +695,8 @@ public class SnowflakeDatabaseModelFactoryTest : IClassFixture<SnowflakeDatabase
                 FLOATING DOUBLE DEFAULT -5.5
             )
             """,
-            Enumerable.Empty<string>(),
-            Enumerable.Empty<string>(),
+            [],
+            [],
             dbModel =>
             {
                 IList<DatabaseColumn> columns = dbModel.Tables.Single().Columns;
@@ -725,8 +724,8 @@ public class SnowflakeDatabaseModelFactoryTest : IClassFixture<SnowflakeDatabase
                 "Derived" bigint as ("Id" * 10)
             )
             """,
-            Enumerable.Empty<string>(),
-            Enumerable.Empty<string>(),
+            [],
+            [],
             dbModel =>
             {
                 var columns = dbModel.Tables.Single().Columns;
@@ -753,8 +752,8 @@ public class SnowflakeDatabaseModelFactoryTest : IClassFixture<SnowflakeDatabase
                 "FixedDefaultValue" TIMESTAMP_NTZ NOT NULL DEFAULT ('2014-01-01 16:00:00'::TIMESTAMP_NTZ)
             )
             """,
-            Enumerable.Empty<string>(),
-            Enumerable.Empty<string>(),
+            [],
+            [],
             dbModel =>
             {
                 var columns = dbModel.Tables.Single().Columns;
@@ -776,8 +775,8 @@ public class SnowflakeDatabaseModelFactoryTest : IClassFixture<SnowflakeDatabase
                 "Id" bigint AUTOINCREMENT START 1 INCREMENT 1 NOORDER
             )
             """,
-            Enumerable.Empty<string>(),
-            Enumerable.Empty<string>(),
+            [],
+            [],
             dbModel =>
             {
                 var columns = dbModel.Tables.Single().Columns;
@@ -798,8 +797,8 @@ public class SnowflakeDatabaseModelFactoryTest : IClassFixture<SnowflakeDatabase
                 "NonNullableInt" int NOT NULL
             )
             """,
-            Enumerable.Empty<string>(),
-            Enumerable.Empty<string>(),
+            [],
+            [],
             dbModel =>
             {
                 var columns = dbModel.Tables.Single().Columns;
@@ -819,8 +818,8 @@ CREATE TABLE "ColumnsWithCollation" (
     "NonDefaultCollation" VARCHAR COLLATE 'de-ci-pi'
 );
 """,
-            Enumerable.Empty<string>(),
-            Enumerable.Empty<string>(),
+            [],
+            [],
             dbModel =>
             {
                 var columns = dbModel.Tables.Single().Columns;
@@ -872,15 +871,15 @@ CREATE TABLE "ColumnsWithCollation" (
                 PRIMARY KEY ("Id2", "Id1")
             )
             """,
-            Enumerable.Empty<string>(),
-            Enumerable.Empty<string>(),
+            [],
+            [],
             dbModel =>
             {
                 var pk = dbModel.Tables.Single().PrimaryKey;
 
                 Assert.Equal("PUBLIC", pk?.Table?.Schema);
                 Assert.Equal("CompositePrimaryKeyTable", pk!.Table!.Name);
-                Assert.Equal(new List<string> { "Id2", "Id1" }, pk.Columns.Select(ic => ic.Name).ToList());
+                Assert.Equal(["Id2", "Id1"], pk.Columns.Select(ic => ic.Name).ToList());
             },
             @"DROP TABLE ""CompositePrimaryKeyTable""");
 
@@ -894,8 +893,8 @@ CREATE TABLE "ColumnsWithCollation" (
                 CONSTRAINT "MyPK" PRIMARY KEY ( "Id2" )
             )
             """,
-            Enumerable.Empty<string>(),
-            Enumerable.Empty<string>(),
+            [],
+            [],
             dbModel =>
             {
                 var pk = dbModel.Tables.Single().PrimaryKey;
@@ -903,7 +902,7 @@ CREATE TABLE "ColumnsWithCollation" (
                 Assert.Equal("PUBLIC", pk?.Table?.Schema);
                 Assert.Equal("PrimaryKeyName", pk!.Table!.Name);
                 Assert.StartsWith("MyPK", pk.Name);
-                Assert.Equal(new List<string> { "Id2" }, pk.Columns.Select(ic => ic.Name).ToList());
+                Assert.Equal(["Id2"], pk.Columns.Select(ic => ic.Name).ToList());
             },
             @"DROP TABLE ""PrimaryKeyName""");
 
@@ -921,8 +920,8 @@ CREATE TABLE "ColumnsWithCollation" (
                 CONSTRAINT "UX" UNIQUE ("Id2", "Id1")
             );
             """,
-            Enumerable.Empty<string>(),
-            Enumerable.Empty<string>(),
+            [],
+            [],
             dbModel =>
             {
                 var uniqueConstraint = Assert.Single(dbModel.Tables.Single().UniqueConstraints);
@@ -930,7 +929,7 @@ CREATE TABLE "ColumnsWithCollation" (
                 Assert.Equal("PUBLIC", uniqueConstraint.Table.Schema);
                 Assert.Equal("CompositeUniqueConstraintTable", uniqueConstraint.Table.Name);
                 Assert.Equal("UX", uniqueConstraint.Name);
-                Assert.Equal(new List<string> { "Id2", "Id1" }, uniqueConstraint.Columns.Select(ic => ic.Name).ToList());
+                Assert.Equal(["Id2", "Id1"], uniqueConstraint.Columns.Select(ic => ic.Name).ToList());
             },
             @"DROP TABLE ""CompositeUniqueConstraintTable""");
 
@@ -945,8 +944,8 @@ CREATE TABLE "ColumnsWithCollation" (
                 CONSTRAINT "MyUC" UNIQUE ( "Id2" )
             );
             """,
-            Enumerable.Empty<string>(),
-            Enumerable.Empty<string>(),
+            [],
+            [],
             dbModel =>
             {
                 var table = dbModel.Tables.Single();
@@ -955,7 +954,7 @@ CREATE TABLE "ColumnsWithCollation" (
                 Assert.Equal("PUBLIC", uniqueConstraint.Table.Schema);
                 Assert.Equal("UniqueConstraintName", uniqueConstraint.Table.Name);
                 Assert.Equal("MyUC", uniqueConstraint.Name);
-                Assert.Equal(new List<string> { "Id2" }, uniqueConstraint.Columns.Select(ic => ic.Name).ToList());
+                Assert.Equal(["Id2"], uniqueConstraint.Columns.Select(ic => ic.Name).ToList());
                 Assert.Empty(table.Indexes);
             },
             @"DROP TABLE ""UniqueConstraintName""");
@@ -982,8 +981,8 @@ CREATE TABLE "ColumnsWithCollation" (
                 FOREIGN KEY ("ForeignKeyId1", "ForeignKeyId2") REFERENCES "PrincipalTable"("Id1", "Id2")
             );
             """],
-            Enumerable.Empty<string>(),
-            Enumerable.Empty<string>(),
+            [],
+            [],
             dbModel =>
             {
                 var fk = Assert.Single(dbModel.Tables.Single(t => t.Name == "DependentTable").ForeignKeys);
@@ -992,8 +991,8 @@ CREATE TABLE "ColumnsWithCollation" (
                 Assert.Equal("DependentTable", fk.Table.Name);
                 Assert.Equal("PUBLIC", fk.PrincipalTable.Schema);
                 Assert.Equal("PrincipalTable", fk.PrincipalTable.Name);
-                Assert.Equal(new List<string> { "ForeignKeyId1", "ForeignKeyId2" }, fk.Columns.Select(ic => ic.Name).ToList());
-                Assert.Equal(new List<string> { "Id1", "Id2" }, fk.PrincipalColumns.Select(ic => ic.Name).ToList());
+                Assert.Equal(["ForeignKeyId1", "ForeignKeyId2"], fk.Columns.Select(ic => ic.Name).ToList());
+                Assert.Equal(["Id1", "Id2"], fk.PrincipalColumns.Select(ic => ic.Name).ToList());
                 Assert.Equal(ReferentialAction.NoAction, fk.OnDelete);
             },
             [
@@ -1024,8 +1023,8 @@ CREATE TABLE "ColumnsWithCollation" (
                 FOREIGN KEY ("ForeignKeyId2") REFERENCES "AnotherPrincipalTable"("Id") ON DELETE NO ACTION
             );
             """],
-            Enumerable.Empty<string>(),
-            Enumerable.Empty<string>(),
+            [],
+            [],
             dbModel =>
             {
                 var foreignKeys = dbModel.Tables.Single(t => t.Name == "DependentTable").ForeignKeys;
@@ -1038,8 +1037,8 @@ CREATE TABLE "ColumnsWithCollation" (
                 Assert.Equal("DependentTable", principalFk.Table.Name);
                 Assert.Equal("PUBLIC", principalFk.PrincipalTable.Schema);
                 Assert.Equal("PrincipalTable", principalFk.PrincipalTable.Name);
-                Assert.Equal(new List<string> { "ForeignKeyId1" }, principalFk.Columns.Select(ic => ic.Name).ToList());
-                Assert.Equal(new List<string> { "Id" }, principalFk.PrincipalColumns.Select(ic => ic.Name).ToList());
+                Assert.Equal(["ForeignKeyId1"], principalFk.Columns.Select(ic => ic.Name).ToList());
+                Assert.Equal(["Id"], principalFk.PrincipalColumns.Select(ic => ic.Name).ToList());
                 Assert.Equal(ReferentialAction.NoAction, principalFk.OnDelete);
 
                 var anotherPrincipalFk = Assert.Single(foreignKeys, f => f.PrincipalTable.Name == "AnotherPrincipalTable");
@@ -1048,8 +1047,8 @@ CREATE TABLE "ColumnsWithCollation" (
                 Assert.Equal("DependentTable", anotherPrincipalFk.Table.Name);
                 Assert.Equal("PUBLIC", anotherPrincipalFk.PrincipalTable.Schema);
                 Assert.Equal("AnotherPrincipalTable", anotherPrincipalFk.PrincipalTable.Name);
-                Assert.Equal(new List<string> { "ForeignKeyId2" }, anotherPrincipalFk.Columns.Select(ic => ic.Name).ToList());
-                Assert.Equal(new List<string> { "Id" }, anotherPrincipalFk.PrincipalColumns.Select(ic => ic.Name).ToList());
+                Assert.Equal(["ForeignKeyId2"], anotherPrincipalFk.Columns.Select(ic => ic.Name).ToList());
+                Assert.Equal(["Id"], anotherPrincipalFk.PrincipalColumns.Select(ic => ic.Name).ToList());
                 Assert.Equal(ReferentialAction.NoAction, anotherPrincipalFk.OnDelete);
             },
             [
@@ -1074,8 +1073,8 @@ CREATE TABLE "ColumnsWithCollation" (
                 FOREIGN KEY ("ForeignKeyId") REFERENCES "PrincipalTable"("Id2") ON DELETE NO ACTION
             );
             """],
-            Enumerable.Empty<string>(),
-            Enumerable.Empty<string>(),
+            [],
+            [],
             dbModel =>
             {
                 var fk = Assert.Single(dbModel.Tables.Single(t => t.Name == "DependentTable").ForeignKeys);
@@ -1085,8 +1084,8 @@ CREATE TABLE "ColumnsWithCollation" (
                 Assert.Equal("DependentTable", fk.Table.Name);
                 Assert.Equal("PUBLIC", fk.PrincipalTable.Schema);
                 Assert.Equal("PrincipalTable", fk.PrincipalTable.Name);
-                Assert.Equal(new List<string> { "ForeignKeyId" }, fk.Columns.Select(ic => ic.Name).ToList());
-                Assert.Equal(new List<string> { "Id2" }, fk.PrincipalColumns.Select(ic => ic.Name).ToList());
+                Assert.Equal(["ForeignKeyId"], fk.Columns.Select(ic => ic.Name).ToList());
+                Assert.Equal(new List<string> { "Id2" }, [.. fk.PrincipalColumns.Select(ic => ic.Name)]);
                 Assert.Equal(ReferentialAction.NoAction, fk.OnDelete);
             },
             [
@@ -1111,8 +1110,8 @@ CREATE TABLE "ColumnsWithCollation" (
                          CONSTRAINT "MYFK" FOREIGN KEY ("ForeignKeyId") REFERENCES "PrincipalTable"("Id") ON DELETE NO ACTION
                      );
                  """],
-            Enumerable.Empty<string>(),
-            Enumerable.Empty<string>(),
+            [],
+            [],
             dbModel =>
             {
                 var fk = Assert.Single(dbModel.Tables.Single(t => t.Name == "DependentTable").ForeignKeys);
@@ -1121,8 +1120,8 @@ CREATE TABLE "ColumnsWithCollation" (
                 Assert.Equal("DependentTable", fk.Table.Name);
                 Assert.Equal("PUBLIC", fk.PrincipalTable.Schema);
                 Assert.Equal("PrincipalTable", fk.PrincipalTable.Name);
-                Assert.Equal(new List<string> { "ForeignKeyId" }, fk.Columns.Select(ic => ic.Name).ToList());
-                Assert.Equal(new List<string> { "Id" }, fk.PrincipalColumns.Select(ic => ic.Name).ToList());
+                Assert.Equal(["ForeignKeyId"], fk.Columns.Select(ic => ic.Name).ToList());
+                Assert.Equal(["Id"], fk.PrincipalColumns.Select(ic => ic.Name).ToList());
                 Assert.Equal(ReferentialAction.NoAction, fk.OnDelete);
                 // ReSharper disable once StringLiteralTypo
                 Assert.Equal("MYFK", fk.Name);
@@ -1144,8 +1143,8 @@ CREATE TABLE "ColumnsWithCollation" (
             """
             CREATE TABLE "Blank" ("Id" int)
             """,
-            Enumerable.Empty<string>(),
-            new[] { "MySchema" },
+            [],
+            ["MySchema"],
             dbModel =>
             {
                 Assert.Empty(dbModel.Tables);
@@ -1164,8 +1163,8 @@ CREATE TABLE "ColumnsWithCollation" (
             """
             CREATE TABLE "Blank" ("Id" int)
             """,
-            new[] { "MyTable" },
-            Enumerable.Empty<string>(),
+            ["MyTable"],
+            [],
             dbModel =>
             {
                 Assert.Empty(dbModel.Tables);
@@ -1192,8 +1191,8 @@ CREATE TABLE "ColumnsWithCollation" (
                 CONSTRAINT "MYFK" FOREIGN KEY ("ForeignKeyId") REFERENCES "PrincipalTable"("Id") ON DELETE NO ACTION
             );
             """],
-            new[] { "DependentTable" },
-            Enumerable.Empty<string>(),
+            ["DependentTable"],
+            [],
             _ =>
             {
                 var (_, id, message, _, _) = Assert.Single(_fixture.ListLoggerFactory.Log, t => t.Level == LogLevel.Warning);
@@ -1214,9 +1213,9 @@ CREATE TABLE "ColumnsWithCollation" (
         Action<DatabaseModel> asserter,
         string[]? cleanupSql = null)
         => Test(
-            Array.Empty<string>(),
-            Array.Empty<string>(),
-            Array.Empty<string>(),
+            [],
+            [],
+            [],
             asserter,
             cleanupSql);
 
@@ -1227,11 +1226,11 @@ CREATE TABLE "ColumnsWithCollation" (
         Action<DatabaseModel> asserter,
         string? cleanupSql)
         => Test(
-            string.IsNullOrEmpty(createSql) ? Array.Empty<string>() : [createSql],
+            string.IsNullOrEmpty(createSql) ? [] : [createSql],
             tables,
             schemas,
             asserter,
-            string.IsNullOrEmpty(cleanupSql) ? Array.Empty<string>() : [cleanupSql]);
+            string.IsNullOrEmpty(cleanupSql) ? [] : [cleanupSql]);
 
     private void Test(
         string[] createSqls,
@@ -1247,7 +1246,6 @@ CREATE TABLE "ColumnsWithCollation" (
 
         try
         {
-#pragma warning disable EF1001
             var databaseModelFactory = new SnowflakeDatabaseModelFactory(
                 new SnowflakeSqlGenerationHelper(new RelationalSqlGenerationHelperDependencies()),
                 new DiagnosticsLogger<DbLoggerCategory.Scaffolding>(
@@ -1256,8 +1254,6 @@ CREATE TABLE "ColumnsWithCollation" (
                     new DiagnosticListener("Fake"),
                     new SnowflakeLoggingDefinitions(),
                     new NullDbContextLogger()));
-#pragma warning restore EF1001
-
             DatabaseModel databaseModel = databaseModelFactory.Create(
                 _fixture.TestStore.ConnectionString,
                 new DatabaseModelFactoryOptions(tables, schemas));
