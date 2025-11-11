@@ -11,6 +11,7 @@ public class SnowflakeRelationalCommandBuilder : RelationalCommandBuilder
 
     public override IRelationalCommand Build()
     {
-        return new SnowflakeRelationalCommand(Dependencies, ToString(), Parameters);
+        var commandText = ToString();
+        return new SnowflakeRelationalCommand(Dependencies, commandText, commandText, Parameters);
     }
 }
