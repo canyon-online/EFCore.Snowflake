@@ -56,7 +56,7 @@ internal static class Check
         {
             NotEmpty(parameterName, nameof(parameterName));
 
-            throw new ArgumentException(AbstractionsStrings.ArgumentIsEmpty(parameterName));
+            throw new ArgumentException(AbstractionsStrings.ArgumentIsEmpty, nameof(parameterName));
         }
 
         return value;
@@ -68,7 +68,7 @@ internal static class Check
         {
             NotEmpty(parameterName, nameof(parameterName));
 
-            throw new ArgumentException(AbstractionsStrings.ArgumentIsEmpty(parameterName));
+            throw new ArgumentException(AbstractionsStrings.ArgumentIsEmpty, nameof(parameterName));
         }
 
         return value;
