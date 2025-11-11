@@ -54,15 +54,6 @@ public class ComplexTypeQuerySnowflakeTest : ComplexTypeQueryTestBase<ComplexTyp
         AssertSql();
     }
 
-    public override async Task Complex_type_equals_null(bool async)
-    {
-        var exception = await Assert.ThrowsAsync<InvalidOperationException>(() => base.Complex_type_equals_null(async));
-
-        Assert.Equal(RelationalStrings.CannotCompareComplexTypeToNull, exception.Message);
-
-        AssertSql();
-    }
-
     public override async Task Subquery_over_struct_complex_type(bool async)
     {
         var exception = await Assert.ThrowsAsync<InvalidOperationException>(() => base.Subquery_over_struct_complex_type(async));
@@ -99,27 +90,6 @@ public class ComplexTypeQuerySnowflakeTest : ComplexTypeQueryTestBase<ComplexTyp
         Same_entity_with_complex_type_projected_twice_with_pushdown_as_part_of_another_projection(bool async)
     {
         await Assert.ThrowsAsync<SnowflakeOuterApplyNotSupportedException>(() => base.Same_entity_with_complex_type_projected_twice_with_pushdown_as_part_of_another_projection(async));
-    }
-
-    // This test fails because when OptionalCustomer is null, we get all-null results because of the LEFT JOIN, and we materialize this
-    // as an empty ShippingAddress instead of null (see SQL). The proper solution here would be to project the Customer ID just for the
-    // purpose of knowing that it's there.
-    public override async Task Project_complex_type_via_optional_navigation(bool async)
-    {
-        var exception = await Assert.ThrowsAsync<InvalidOperationException>(() => base.Project_complex_type_via_optional_navigation(async));
-
-        Assert.Equal(RelationalStrings.CannotProjectNullableComplexType("Customer.ShippingAddress#Address"), exception.Message);
-    }
-
-    // This test fails because when OptionalCustomer is null, we get all-null results because of the LEFT JOIN, and we materialize this
-    // as an empty ShippingAddress instead of null (see SQL). The proper solution here would be to project the Customer ID just for the
-    // purpose of knowing that it's there.
-    public override async Task Project_struct_complex_type_via_optional_navigation(bool async)
-    {
-        var exception =
-            await Assert.ThrowsAsync<InvalidOperationException>(() => base.Project_struct_complex_type_via_optional_navigation(async));
-
-        Assert.Equal(RelationalStrings.CannotProjectNullableComplexType("ValuedCustomer.ShippingAddress#AddressStruct"), exception.Message);
     }
 
     public class ComplexTypeQuerySnowflakeFixture : ComplexTypeQueryRelationalFixtureBase
